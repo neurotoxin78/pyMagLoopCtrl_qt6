@@ -241,7 +241,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def addButton_click(self):
         self.add_dialog.set_fields_values("Діапазон", self.current_position_label.text(), "")
         answer = self.add_dialog.exec()
-        if answer == AddDialog.Accepted:
+        if answer:
             values = self.add_dialog.get_fields_values()
             self.addTreeItem(self.model, values['band'], values['step'], values['desc'])
         else:
