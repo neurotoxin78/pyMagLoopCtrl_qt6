@@ -217,9 +217,16 @@ class MainWindow(QtWidgets.QMainWindow):
                     row_data.append(index.data())
                 output.append(row_data)
             # Move Action
-            if self.current_position > int(output[0][1]):
+            if self.current_position == 0:
+                con.log(f"Move from 0 to {output[0][1]}")
+                steps = round(int(output[0][1])) / 100
+                for i in range(int(steps)):
+                    self.moveTo(0, 100, self.speed)
+                    sleep(0.1)
+                self.current_position = int(self.current_position_label.text())
+            elif self.current_position > int(output[0][1]):
                 difference = self.current_position - int(output[0][1])
-                con.log(f"minus: {difference}")
+                con.log(f"Move from {self.current_position} to {output[0][1]}")
                 steps = round(int(difference) / 100)
                 for i in range(int(steps)):
                     self.moveTo(1, 100, self.speed)
@@ -227,13 +234,12 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.current_position = int(self.current_position_label.text())
             else:
                 difference = int(output[0][1]) - self.current_position
-                con.log(f"plus {difference}")
+                con.log(f"Move from {self.current_position} to {output[0][1]}")
                 steps = round(int(difference) / 100)
                 for i in range(int(steps)):
                     self.moveTo(0, 100, self.speed)
                     sleep(0.1)
                 self.current_position = int(self.current_position_label.text())
-
     def getValue(self, value):
         self.current_treeIndex = value
 
@@ -292,8 +298,9 @@ class MainWindow(QtWidgets.QMainWindow):
             resp = requests.get(self.url + self.api_park)
             json = resp.json()
             if 'step_count' in json:
-                con.log(json['step_count'])
+                con.log(F"step_count: {json['step_count']}")
                 self.current_position_label.setText(str(json['step_count']))
+                self.current_position = int(json['step_count'])
             if 'status' in json:
                 self.status_label.setText(F"Статус: {json['status']}")
 
