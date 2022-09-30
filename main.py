@@ -22,6 +22,9 @@ def extended_exception_hook(exctype, value, traceback):
 class AddDialog(QtWidgets.QDialog):
     def __init__(self):
         super().__init__()
+        self.desclineEdit = None
+        self.steplineEdit = None
+        self.bandlineEdit = None
         uic.loadUi('add_dialog.ui', self)
 
     def set_fields_values(self, band, step, desc):
@@ -36,11 +39,7 @@ class AddDialog(QtWidgets.QDialog):
         return {"band": band, "step": step, "desc": desc}
 
 
-class VLine(QtWidgets.QFrame):
-    # a simple VLine, like the one you get from designer
-    def __init__(self):
-        super(VLine, self).__init__()
-        self.setFrameShape(self.VLine | self.Sunken)
+
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -176,6 +175,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.bandtreeView.setAlternatingRowColors(True)
         self.model = self.createBandTreeModel(self)
         self.bandtreeView.setModel(self.model)
+        self.bandtreeView.setSortingEnabled(True)
 
     def createBandTreeModel(self, parent):
         model = QStandardItemModel(0, 3, parent)
