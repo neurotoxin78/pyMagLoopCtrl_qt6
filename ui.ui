@@ -134,7 +134,7 @@
       <x>10</x>
       <y>160</y>
       <width>411</width>
-      <height>281</height>
+      <height>256</height>
      </rect>
     </property>
     <property name="title">
@@ -149,7 +149,7 @@
        <x>10</x>
        <y>30</y>
        <width>391</width>
-       <height>206</height>
+       <height>186</height>
       </rect>
      </property>
     </widget>
@@ -157,7 +157,7 @@
      <property name="geometry">
       <rect>
        <x>165</x>
-       <y>240</y>
+       <y>220</y>
        <width>86</width>
        <height>28</height>
       </rect>
@@ -170,7 +170,7 @@
      <property name="geometry">
       <rect>
        <x>322</x>
-       <y>240</y>
+       <y>220</y>
        <width>81</width>
        <height>28</height>
       </rect>
@@ -183,7 +183,7 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>240</y>
+       <y>220</y>
        <width>86</width>
        <height>28</height>
       </rect>
@@ -197,9 +197,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>450</y>
+      <y>415</y>
       <width>411</width>
-      <height>86</height>
+      <height>106</height>
      </rect>
     </property>
     <property name="title">
@@ -258,6 +258,19 @@
      </property>
      <property name="text">
       <string>Паркувати</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="autoConCheckBox">
+     <property name="geometry">
+      <rect>
+       <x>225</x>
+       <y>75</y>
+       <width>126</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Автоз'єднання</string>
      </property>
     </widget>
    </widget>

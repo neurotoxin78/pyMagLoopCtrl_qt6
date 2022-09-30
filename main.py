@@ -70,16 +70,28 @@ class MainWindow(QtWidgets.QMainWindow):
         self.api_park = None
         self.api_move = None
         self.url = None
+        self.autocon = False
         self.current_treeIndex = 0
         self.initUI()
         self.configure()
         self.bandTreeViewConfig()
         self.load_bandTree()
+        self.autoconnect()
+
+    def autoconnect(self):
+        self.autocon = self.autoConCheckBox.isChecked()
+        if self.autocon:
+            self.connectButton_click()
+
+    def set_autoconnect(self):
+        self.autocon = self.autoConCheckBox.isChecked()
+        con.log(F"Set autoconnect: {self.autocon}")
 
     @staticmethod
     def connect(url):
         try:
             req = requests.get(url + "/settings")
+            con.log(F"Connected")
             return req
         except:
             con.log("Network error")
@@ -90,6 +102,7 @@ class MainWindow(QtWidgets.QMainWindow):
         try:
             with open(filename, "r") as f:
                 config = jconf.load(f)
+            con.log(F"Load Config: {filename}")
             return config
         except:
             raise FileNotFoundError(F"File {filename} not found.")
@@ -121,14 +134,14 @@ class MainWindow(QtWidgets.QMainWindow):
             jconf.dump(d_dict, fp)
 
     def store_defaults(self):
-        defaults = {"defaults": {"step": self.step, "speed": self.speed}}
+        defaults = {"defaults": {"step": self.step, "speed": self.speed, "autoconnect": self.autocon}}
         defaults = jconf.dumps(defaults, indent=4)
         jsondefs = jconf.loads(defaults)
         try:
-            with open("stored_defaults.json", "w") as f:
+            with open("defaults.json", "w") as f:
                 jconf.dump(jsondefs, f)
         except:
-            raise FileNotFoundError("File stored_defaults.json not found.")
+            raise FileNotFoundError("File defaults.json not found.")
 
     def configure(self):
         config = self.get_json_config("api.json")
@@ -139,6 +152,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.api_park = api["park"]
             self.api_status = api["status"]
             self.url_lineEdit.setText(self.url)
+            con.log(F"Loaded API config")
         else:
             raise KeyError("Error: Key 'api' not found in config file.")
         defaults = self.get_json_config("defaults.json")
@@ -150,6 +164,10 @@ class MainWindow(QtWidgets.QMainWindow):
             self.step_comboBox.setCurrentIndex(step_index)
             speed_index = self.speed_comboBox.findText(self.speed)
             self.speed_comboBox.setCurrentIndex(speed_index)
+            con.log(F"Autoconnect: {bool(d['autoconnect'])}")
+            if bool(d['autoconnect']):
+                self.autoConCheckBox.setChecked(True)
+            con.log(F"Loaded defaults")
         else:
             raise KeyError("Error: Key 'defaults' not found in config file.")
 
@@ -171,6 +189,7 @@ class MainWindow(QtWidgets.QMainWindow):
         model.setData(model.index(0, self.BAND), band)
         model.setData(model.index(0, self.STEPS), steps)
         model.setData(model.index(0, self.DESCRIPTION), desc)
+        con.log(F"Added items Band: {band}, Step : {steps}, Description: {desc}")
 
     def initUI(self):
         self.upButton.clicked.connect(self.upButton_click)
@@ -181,7 +200,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.bandtreeView.clicked.connect(self.getValue)
         self.runButton.clicked.connect(self.runButton_click)
         self.deleteButton.clicked.connect(self.deleteButton_click)
+        self.autoConCheckBox.toggled.connect(self.set_autoconnect)
         self.comboInit()
+        con.log(F"UI Initialized")
 
     def deleteButton_click(self):
         indices = self.bandtreeView.selectionModel().selectedRows()
