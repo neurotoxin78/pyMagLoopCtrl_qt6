@@ -205,11 +205,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.comboInit()
 
     def deleteButton_click(self):
-        rows = {index.row() for index in self.bandtreeView.selectionModel().selectedIndexes()}
-        for row in rows:
-            for column in range(self.bandtreeView.model().columnCount()):
-                index = self.bandtreeView.model().index(row, column)
-                self.model.takeRow(index.row())
+        indices = self.bandtreeView.selectionModel().selectedRows()
+        for index in sorted(indices):
+            self.model.removeRow(index.row())
 
 
     def runButton_click(self):
@@ -236,6 +234,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 for i in range(int(steps)):
                     self.moveTo(0, 10, self.speed)
                     sleep(0.01)
+
     def getValue(self, value):
         self.current_treeIndex = value
     def addButton_click(self):
