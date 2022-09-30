@@ -10,6 +10,7 @@ from rich.console import Console
 
 con = Console()
 
+
 def extended_exception_hook(exctype, value, traceback):
     # Print the error and traceback
     con.log(exctype, value, traceback)
@@ -32,46 +33,7 @@ class AddDialog(QtWidgets.QDialog):
         band = self.bandlineEdit.text()
         step = self.steplineEdit.text()
         desc = self.desclineEdit.text()
-        return {"band": band, "step" : step, "desc" : desc}
-
-
-class Jconfig():
-    def __init__(self):
-        pass
-
-    def get_stored_bands(self):
-        try:
-            with open("bands.json", "r") as f:
-                config = jconf.load(f)
-            return config
-        except:
-            raise FileNotFoundError("File bands.json not found.")
-
-    def get_config(self):
-        try:
-            with open("api.json", "r") as f:
-                config = jconf.load(f)
-            return config
-        except:
-            raise FileNotFoundError("File config.json not found.")
-
-    def get_defaults(self):
-        try:
-            with open("stored_defaults.json", "r") as f:
-                config = jconf.load(f)
-            return config
-        except:
-            raise FileNotFoundError("File config.json not found.")
-
-
-class CapControl():
-    def __init__(self):
-        pass
-
-    def connect(self, url):
-        # Реалізувати обробку помилки
-        req = requests.get(url + "/settings")
-        return req
+        return {"band": band, "step": step, "desc": desc}
 
 
 class VLine(QtWidgets.QFrame):
@@ -96,9 +58,8 @@ class MainWindow(QtWidgets.QMainWindow):
         # Main Timer
         self.main_Timer = QtCore.QTimer()
         self.main_Timer.timeout.connect(self.mainTimer)
-        self.main_Timer.start(30000)
+        # self.main_Timer.start(30000)
         # Variables
-        self.jconfig = Jconfig()
         self.connected = False
         self.direction = None
         self.step = None
@@ -109,14 +70,31 @@ class MainWindow(QtWidgets.QMainWindow):
         self.api_park = None
         self.api_move = None
         self.url = None
-        self.cap_ctrl = CapControl()
+        self.current_treeIndex = 0
         self.initUI()
         self.configure()
         self.bandTreeViewConfig()
         self.load_bandTree()
 
+    def connect(self, url):
+        try:
+            req = requests.get(url + "/settings")
+            return req
+        except:
+            con.log("Network error")
+            raise ConnectionError("Error connect to device. Check IP:PORT ")
+
+    @staticmethod
+    def get_json_config(filename: str):
+        try:
+            with open(filename, "r") as f:
+                config = jconf.load(f)
+            return config
+        except:
+            raise FileNotFoundError(F"File {filename} not found.")
+
     def load_bandTree(self):
-        config = self.jconfig.get_stored_bands()
+        config = self.get_json_config("bands.json")
         if "bands" in config:
             bands = config["bands"]
             for key in bands:
@@ -152,7 +130,7 @@ class MainWindow(QtWidgets.QMainWindow):
             raise FileNotFoundError("File stored_defaults.json not found.")
 
     def configure(self):
-        config = self.jconfig.get_config()
+        config = self.get_json_config("api.json")
         if "api" in config:
             api = config["api"]
             self.url = api["url"]
@@ -162,7 +140,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.url_lineEdit.setText(self.url)
         else:
             raise KeyError("Error: Key 'api' not found in config file.")
-        defaults = self.jconfig.get_defaults()
+        defaults = self.get_json_config("stored_defaults.json")
         if "defaults" in defaults:
             d = defaults["defaults"]
             self.step = d["step"]
@@ -209,7 +187,6 @@ class MainWindow(QtWidgets.QMainWindow):
         for index in sorted(indices):
             self.model.removeRow(index.row())
 
-
     def runButton_click(self):
         if self.connected:
             rows = {index.row() for index in self.bandtreeView.selectionModel().selectedIndexes()}
@@ -221,22 +198,23 @@ class MainWindow(QtWidgets.QMainWindow):
                     row_data.append(index.data())
                 output.append(row_data)
             if self.current_position > int(output[0][1]):
-                difference = self.current_position - int(output[0][1]) - 1
+                difference = self.current_position - int(output[0][1])
                 con.log(f"minus: {difference}")
-                steps =  round(int(difference) / 10)
+                steps = round(int(difference) / 100)
                 for i in range(int(steps)):
-                    self.moveTo(1, 10, self.speed)
-                    sleep(0.01)
+                    self.moveTo(1, 100, self.speed)
+                    sleep(0.1)
             else:
-                difference = int(output[0][1]) - self.current_position + 1
+                difference = int(output[0][1]) - self.current_position
                 con.log(f"plus {difference}")
-                steps =  round(int(difference) / 10)
+                steps = round(int(difference) / 100)
                 for i in range(int(steps)):
-                    self.moveTo(0, 10, self.speed)
-                    sleep(0.01)
+                    self.moveTo(0, 100, self.speed)
+                    sleep(0.1)
 
     def getValue(self, value):
         self.current_treeIndex = value
+
     def addButton_click(self):
         self.add_dialog.set_fields_values("Діапазон", self.current_position_label.text(), "")
         answer = self.add_dialog.exec()
@@ -311,7 +289,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def connectButton_click(self):
         self.url = self.url_lineEdit.text()
-        json = self.cap_ctrl.connect(self.url).json()
+        json = self.connect(self.url).json()
         if 'ip' in json:
             self.statusbar.showMessage(json['ip'] + " з'єднано")
             self.connected = True
@@ -328,6 +306,7 @@ class MainWindow(QtWidgets.QMainWindow):
         con.log("Storing bands tree")
         event.accept()
         sys.exit()
+
 
 def main():
     sys._excepthook = sys.excepthook
