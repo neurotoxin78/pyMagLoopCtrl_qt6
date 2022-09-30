@@ -76,7 +76,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.bandTreeViewConfig()
         self.load_bandTree()
 
-    def connect(self, url):
+    @staticmethod
+    def connect(url):
         try:
             req = requests.get(url + "/settings")
             return req
@@ -140,7 +141,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.url_lineEdit.setText(self.url)
         else:
             raise KeyError("Error: Key 'api' not found in config file.")
-        defaults = self.get_json_config("stored_defaults.json")
+        defaults = self.get_json_config("defaults.json")
         if "defaults" in defaults:
             d = defaults["defaults"]
             self.step = d["step"]
