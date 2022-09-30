@@ -8,9 +8,9 @@ from PyQt6.QtCore import Qt
 from time import sleep
 from rich.console import Console
 
+
+
 con = Console()
-
-
 def extended_exception_hook(exctype, value, traceback):
     # Print the error and traceback
     con.log(exctype, value, traceback)
@@ -37,9 +37,6 @@ class AddDialog(QtWidgets.QDialog):
         step = self.steplineEdit.text()
         desc = self.desclineEdit.text()
         return {"band": band, "step": step, "desc": desc}
-
-
-
 
 
 class MainWindow(QtWidgets.QMainWindow):
