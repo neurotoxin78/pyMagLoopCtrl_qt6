@@ -8,14 +8,14 @@ from PyQt6.QtCore import Qt
 from time import sleep
 from rich.console import Console
 
-
-
 con = Console()
-def extended_exception_hook(exctype, value, traceback):
+
+
+def extended_exception_hook(exec_type, value, traceback):
     # Print the error and traceback
-    con.log(exctype, value, traceback)
+    con.log(exec_type, value, traceback)
     # Call the normal Exception hook after
-    sys._excepthook(exctype, value, traceback)
+    sys._excepthook(exec_type, value, traceback)
     sys.exit(1)
 
 
@@ -54,7 +54,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # Main Timer
         self.main_Timer = QtCore.QTimer()
         self.main_Timer.timeout.connect(self.mainTimer)
-        # self.main_Timer.start(30000)
+        self.main_Timer.start(60000)
         # Variables
         self.connected = False
         self.direction = None
@@ -89,7 +89,7 @@ class MainWindow(QtWidgets.QMainWindow):
             req = requests.get(url + "/settings")
             con.log(F"Connected")
             return req
-        except:
+        except ConnectionError:
             con.log("Network error")
             raise ConnectionError("Error connect to device. Check IP:PORT ")
 
@@ -100,7 +100,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 config = jconf.load(f)
             con.log(F"Load Config: {filename}")
             return config
-        except:
+        except FileNotFoundError:
             raise FileNotFoundError(F"File {filename} not found.")
 
     def load_bandTree(self):
@@ -113,8 +113,7 @@ class MainWindow(QtWidgets.QMainWindow):
             raise KeyError("Error: Key 'bands' not found in config file.")
 
     def store_bandTree(self):
-        d_dict = {}
-        d_dict['bands'] = {}
+        d_dict = {'bands': {}}
         for row in range(self.model.rowCount()):
             d_dict['bands'][row] = {}
             for column in range(self.model.columnCount()):
@@ -136,7 +135,7 @@ class MainWindow(QtWidgets.QMainWindow):
         try:
             with open("defaults.json", "w") as f:
                 jconf.dump(jsondefs, f)
-        except:
+        except Exception:
             raise FileNotFoundError("File defaults.json not found.")
 
     def configure(self):
@@ -240,6 +239,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     self.moveTo(0, 100, self.speed)
                     sleep(0.1)
                 self.current_position = int(self.current_position_label.text())
+
     def getValue(self, value):
         self.current_treeIndex = value
 
@@ -265,15 +265,16 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             self.statusbar.showMessage("Не з'єднано")
 
-    def mainTimer(self):
+    @staticmethod
+    def mainTimer():
         gc.collect()
         mem = gc.get_stats()
         con.log("Garbage collect", justify="center")
         con.print(mem)
 
-    def moveTo(self, dir, step, speed):
+    def moveTo(self, direction, step, speed):
         if self.connected:
-            json = {'dir': dir, 'step': step, 'speed': speed}
+            json = {'dir': direction, 'step': step, 'speed': speed}
             resp = requests.post(self.url + self.api_move, json=json)
             json = resp.json()
             if 'step_count' in json:

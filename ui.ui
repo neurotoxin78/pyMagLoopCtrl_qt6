@@ -6,19 +6,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>430</width>
+    <width>400</width>
     <height>600</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>430</width>
+    <width>400</width>
     <height>600</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>430</width>
+    <width>400</width>
     <height>600</height>
    </size>
   </property>
@@ -29,259 +29,191 @@
    <string notr="true"/>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QGroupBox" name="manualGroup">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>410</width>
-      <height>144</height>
-     </rect>
-    </property>
-    <property name="title">
-     <string>Налаштування</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignCenter</set>
-    </property>
-    <layout class="QGridLayout" name="gridLayout">
-     <item row="0" column="0">
-      <widget class="QPushButton" name="upButton">
-       <property name="text">
-        <string>Збільшити</string>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="2">
-      <widget class="QLabel" name="current_position_label">
-       <property name="font">
-        <font>
-         <pointsize>12</pointsize>
-         <weight>50</weight>
-         <bold>false</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>0</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="3">
-      <widget class="QComboBox" name="step_comboBox">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="frame">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="3">
-      <widget class="QComboBox" name="speed_comboBox">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="0">
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Поточна позиція:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="2">
-      <widget class="QLabel" name="speedlabel">
-       <property name="text">
-        <string>Швидкість</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0">
-      <widget class="QPushButton" name="downButton">
-       <property name="text">
-        <string>Зменшити</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="2">
-      <widget class="QLabel" name="steplabel">
-       <property name="text">
-        <string>Кроки</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-   <widget class="QGroupBox" name="bandGroup">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>160</y>
-      <width>411</width>
-      <height>261</height>
-     </rect>
-    </property>
-    <property name="title">
-     <string>Діапазони</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignCenter</set>
-    </property>
-    <widget class="QTreeView" name="bandtreeView">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>30</y>
-       <width>391</width>
-       <height>186</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="addButton">
-     <property name="geometry">
-      <rect>
-       <x>165</x>
-       <y>220</y>
-       <width>86</width>
-       <height>28</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Додати</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="deleteButton">
-     <property name="geometry">
-      <rect>
-       <x>322</x>
-       <y>220</y>
-       <width>81</width>
-       <height>28</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Видалити</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="runButton">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>220</y>
-       <width>86</width>
-       <height>28</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Виконати</string>
-     </property>
-    </widget>
-   </widget>
-   <widget class="QGroupBox" name="connect_groupBox">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>430</y>
-      <width>411</width>
-      <height>106</height>
-     </rect>
-    </property>
-    <property name="title">
-     <string>Підключення</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignCenter</set>
-    </property>
-    <widget class="QPushButton" name="connectButton">
-     <property name="geometry">
-      <rect>
-       <x>220</x>
-       <y>35</y>
-       <width>90</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>З'єднати</string>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="url_lineEdit">
-     <property name="geometry">
-      <rect>
-       <x>50</x>
-       <y>40</y>
-       <width>161</width>
-       <height>22</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_2">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>40</y>
-       <width>31</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>URL:</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="parkButton">
-     <property name="geometry">
-      <rect>
-       <x>313</x>
-       <y>35</y>
-       <width>90</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Паркувати</string>
-     </property>
-    </widget>
-    <widget class="QCheckBox" name="autoConCheckBox">
-     <property name="geometry">
-      <rect>
-       <x>225</x>
-       <y>75</y>
-       <width>126</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Автоз'єднання</string>
-     </property>
-    </widget>
-   </widget>
+   <layout class="QGridLayout" name="gridLayout_3">
+    <item row="0" column="0">
+     <widget class="QGroupBox" name="manualGroup">
+      <property name="title">
+       <string>Налаштування</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="0">
+        <widget class="QPushButton" name="upButton">
+         <property name="text">
+          <string>Збільшити</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="2">
+        <widget class="QLabel" name="current_position_label">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>0</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3">
+        <widget class="QComboBox" name="step_comboBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="frame">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="3">
+        <widget class="QComboBox" name="speed_comboBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Поточна позиція:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="2">
+        <widget class="QLabel" name="speedlabel">
+         <property name="text">
+          <string>Швидкість</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QPushButton" name="downButton">
+         <property name="text">
+          <string>Зменшити</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QLabel" name="steplabel">
+         <property name="text">
+          <string>Кроки</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QGroupBox" name="bandGroup">
+      <property name="title">
+       <string>Діапазони</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="1" column="2">
+        <widget class="QPushButton" name="deleteButton">
+         <property name="text">
+          <string>Видалити</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0" colspan="3">
+        <widget class="QTreeView" name="bandtreeView"/>
+       </item>
+       <item row="1" column="0">
+        <widget class="QPushButton" name="runButton">
+         <property name="text">
+          <string>Виконати</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QPushButton" name="addButton">
+         <property name="text">
+          <string>Додати</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QGroupBox" name="connect_groupBox">
+      <property name="title">
+       <string>Підключення</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_4">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>URL:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="url_lineEdit">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QPushButton" name="connectButton">
+         <property name="text">
+          <string>З'єднати</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3">
+        <widget class="QPushButton" name="parkButton">
+         <property name="text">
+          <string>Паркувати</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="2" colspan="2">
+        <widget class="QCheckBox" name="autoConCheckBox">
+         <property name="text">
+          <string>Автоз'єднання</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>430</width>
-     <height>26</height>
+     <width>400</width>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
