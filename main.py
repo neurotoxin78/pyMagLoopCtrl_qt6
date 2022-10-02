@@ -50,7 +50,9 @@ class MainWindow(QtWidgets.QMainWindow):
         # Load the UI Page
         uic.loadUi('ui.ui', self)
         self.status_label = QtWidgets.QLabel("Статус: ")
+        self.relay_status_label = QtWidgets.QLabel("Реле: ")
         self.statusbar.addPermanentWidget(self.status_label)
+        self.statusbar.addPermanentWidget(self.relay_status_label)
         self.statusbar.reformat()
         self.setStylesheet("stylesheets/cap_control.qss")
         self.add_dialog = AddDialog()
@@ -90,8 +92,9 @@ class MainWindow(QtWidgets.QMainWindow):
                 #self.relay = False
             resp = requests.post(self.url + self.api_relay, json=json)
             json = resp.json()
-            # if 'switch_state' in json:
-            #     con.log(json["switch_state"])
+            if 'status' in json:
+                stat = json["status"]
+                self.relay_status_label.setText(F"Реле: {stat}")
             # if 'status' in json:
             #     self.status_label.setText(F"Статус: {json['status']}")
 
@@ -248,9 +251,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     index = self.bandtreeView.model().index(row, column)
                     row_data.append(index.data())
                 output.append(row_data)
-            # con.log(bool(output[0][2]))
             # Set Relay State
-
             if bool(output[0][2]):
                 # print(output[0][2])
                 self.relaycheckBox.setChecked(True)
