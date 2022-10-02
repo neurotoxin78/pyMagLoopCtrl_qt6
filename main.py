@@ -25,18 +25,21 @@ class AddDialog(QtWidgets.QDialog):
         self.desclineEdit = None
         self.steplineEdit = None
         self.bandlineEdit = None
+        self.relaycheckBox = None
         uic.loadUi('add_dialog.ui', self)
 
-    def set_fields_values(self, band, step, desc):
+    def set_fields_values(self, band, step, relay, desc):
         self.bandlineEdit.setText(band)
         self.steplineEdit.setText(step)
         self.desclineEdit.setText(desc)
+        self.relaycheckBox.setChecked(bool(relay))
 
     def get_fields_values(self):
         band = self.bandlineEdit.text()
         step = self.steplineEdit.text()
         desc = self.desclineEdit.text()
-        return {"band": band, "step": step, "desc": desc}
+        relay = self.relaycheckBox.isChecked()
+        return {"band": band, "step": step, "relay": relay, "desc": desc}
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -87,10 +90,10 @@ class MainWindow(QtWidgets.QMainWindow):
                 #self.relay = False
             resp = requests.post(self.url + self.api_relay, json=json)
             json = resp.json()
-            if 'switch_state' in json:
-                con.log(json["switch_state"])
-            if 'status' in json:
-                self.status_label.setText(F"Статус: {json['status']}")
+            # if 'switch_state' in json:
+            #     con.log(json["switch_state"])
+            # if 'status' in json:
+            #     self.status_label.setText(F"Статус: {json['status']}")
 
     def autoconnect(self):
         self.autocon = self.autoConCheckBox.isChecked()
@@ -142,7 +145,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     case 1:
                         d_dict['bands'][row]['step'] = str(self.model.data(index))
                     case 2:
-                        d_dict['bands'][row]['relay'] = str(self.model.data(index))
+                        d_dict['bands'][row]['relay'] = bool(self.model.data(index))
                     case 3:
                         d_dict['bands'][row]['desc'] = str(self.model.data(index))
         with open("bands.json", "w") as fp:
@@ -242,14 +245,14 @@ class MainWindow(QtWidgets.QMainWindow):
                     index = self.bandtreeView.model().index(row, column)
                     row_data.append(index.data())
                 output.append(row_data)
-            con.log(bool(output[0][2]))
+            # con.log(bool(output[0][2]))
             # Set Relay State
-            if output[0][2] == "True":
-                #self.relay = True
+
+            if bool(output[0][2]):
+                # print(output[0][2])
                 self.relaycheckBox.setChecked(True)
                 self.set_relay()
             else:
-                #self.relay = False
                 self.relaycheckBox.setChecked(False)
                 self.set_relay()
             # Move Action
@@ -281,11 +284,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.current_treeIndex = value
 
     def addButton_click(self):
-        self.add_dialog.set_fields_values("Діапазон", self.current_position_label.text(), "")
+        self.add_dialog.set_fields_values("Діапазон", self.current_position_label.text(), self.relay, "")
         answer = self.add_dialog.exec()
         if answer:
             values = self.add_dialog.get_fields_values()
-            self.addTreeItem(self.model, values['band'], values['step'], values['relay'], values['desc'])
+            self.addTreeItem(self.model, values['band'], values['step'], bool(values['relay']), values['desc'])
         else:
             con.log("Cancel")
 
