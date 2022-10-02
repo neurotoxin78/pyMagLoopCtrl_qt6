@@ -81,8 +81,10 @@ class MainWindow(QtWidgets.QMainWindow):
             self.relay = self.relaycheckBox.isChecked()
             if self.relay:
                 json = {'switch': "0"}
+                #self.relay = True
             else:
                 json = {'switch': "1"}
+                #self.relay = False
             resp = requests.post(self.url + self.api_relay, json=json)
             json = resp.json()
             if 'switch_state' in json:
@@ -240,6 +242,16 @@ class MainWindow(QtWidgets.QMainWindow):
                     index = self.bandtreeView.model().index(row, column)
                     row_data.append(index.data())
                 output.append(row_data)
+            con.log(bool(output[0][2]))
+            # Set Relay State
+            if output[0][2] == "True":
+                #self.relay = True
+                self.relaycheckBox.setChecked(True)
+                self.set_relay()
+            else:
+                #self.relay = False
+                self.relaycheckBox.setChecked(False)
+                self.set_relay()
             # Move Action
             if self.current_position == 0:
                 con.log(f"Move from 0 to {output[0][1]}")
