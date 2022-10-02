@@ -4,6 +4,7 @@
         "settings" : "/settings",
         "move" : "/move",
         "park" : "/park",
-        "status" : "/status"
+        "status" : "/status",
+        "relay" : "/relay"
     }
 }

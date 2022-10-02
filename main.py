@@ -199,6 +199,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.model = self.createBandTreeModel(self)
         self.bandtreeView.setModel(self.model)
         self.bandtreeView.setSortingEnabled(True)
+        self.bandtreeView.setColumnWidth(0, 85)
+        self.bandtreeView.setColumnWidth(1, 50)
+        self.bandtreeView.setColumnWidth(2, 50)
 
     def createBandTreeModel(self, parent):
         model = QStandardItemModel(0, 4, parent)

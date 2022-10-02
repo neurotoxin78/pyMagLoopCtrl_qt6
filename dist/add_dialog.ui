@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>411</width>
-    <height>108</height>
+    <height>153</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,19 +23,6 @@ QDialog {background-color: rgb(124, 124, 124);}
 </string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
-    <widget class="QLabel" name="label">
-     <property name="styleSheet">
-      <string notr="true">color: rgb(255, 255, 255);</string>
-     </property>
-     <property name="text">
-      <string>Діапазон</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1">
-    <widget class="QLineEdit" name="bandlineEdit"/>
-   </item>
    <item row="0" column="2" rowspan="3">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="styleSheet">
@@ -101,6 +88,15 @@ QPushButton::checked
      </property>
     </widget>
    </item>
+   <item row="2" column="1">
+    <widget class="QLineEdit" name="desclineEdit"/>
+   </item>
+   <item row="0" column="1">
+    <widget class="QLineEdit" name="bandlineEdit"/>
+   </item>
+   <item row="1" column="1">
+    <widget class="QLineEdit" name="steplineEdit"/>
+   </item>
    <item row="1" column="0">
     <widget class="QLabel" name="label_2">
      <property name="styleSheet">
@@ -111,8 +107,15 @@ QPushButton::checked
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
-    <widget class="QLineEdit" name="steplineEdit"/>
+   <item row="0" column="0">
+    <widget class="QLabel" name="label">
+     <property name="styleSheet">
+      <string notr="true">color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="text">
+      <string>Діапазон</string>
+     </property>
+    </widget>
    </item>
    <item row="2" column="0">
     <widget class="QLabel" name="label_3">
@@ -124,8 +127,12 @@ QPushButton::checked
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
-    <widget class="QLineEdit" name="desclineEdit"/>
+   <item row="3" column="1">
+    <widget class="QCheckBox" name="relaycheckBox">
+     <property name="text">
+      <string>Реле</string>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
