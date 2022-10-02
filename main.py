@@ -40,7 +40,7 @@ class AddDialog(QtWidgets.QDialog):
 
 
 class MainWindow(QtWidgets.QMainWindow):
-    BAND, STEPS, DESCRIPTION = range(3)
+    BAND, STEPS, RELAY, DESCRIPTION = range(4)
 
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
@@ -59,12 +59,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self.connected = False
         self.direction = None
         self.step = None
+        self.relay = True
         self.speed = None
         self.current_position = None
         self.max_position = None
         self.api_status = None
         self.api_park = None
         self.api_move = None
+        self.api_relay = None
         self.url = None
         self.autocon = False
         self.current_treeIndex = 0
@@ -73,6 +75,20 @@ class MainWindow(QtWidgets.QMainWindow):
         self.bandTreeViewConfig()
         self.load_bandTree()
         self.autoconnect()
+
+    def set_relay(self):
+        if self.connected:
+            self.relay = self.relaycheckBox.isChecked()
+            if self.relay:
+                json = {'switch': "0"}
+            else:
+                json = {'switch': "1"}
+            resp = requests.post(self.url + self.api_relay, json=json)
+            json = resp.json()
+            if 'switch_state' in json:
+                con.log(json["switch_state"])
+            if 'status' in json:
+                self.status_label.setText(F"Статус: {json['status']}")
 
     def autoconnect(self):
         self.autocon = self.autoConCheckBox.isChecked()
@@ -108,7 +124,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if "bands" in config:
             bands = config["bands"]
             for key in bands:
-                self.addTreeItem(self.model, bands[key]['band'], bands[key]['step'], bands[key]['desc'])
+                self.addTreeItem(self.model, bands[key]['band'], bands[key]['step'], bands[key]['relay'], bands[key]['desc'])
         else:
             raise KeyError("Error: Key 'bands' not found in config file.")
 
@@ -124,12 +140,14 @@ class MainWindow(QtWidgets.QMainWindow):
                     case 1:
                         d_dict['bands'][row]['step'] = str(self.model.data(index))
                     case 2:
+                        d_dict['bands'][row]['relay'] = str(self.model.data(index))
+                    case 3:
                         d_dict['bands'][row]['desc'] = str(self.model.data(index))
         with open("bands.json", "w") as fp:
             jconf.dump(d_dict, fp)
 
     def store_defaults(self):
-        defaults = {"defaults": {"step": self.step, "speed": self.speed, "autoconnect": self.autocon}}
+        defaults = {"defaults": {"step": self.step, "speed": self.speed, "autoconnect": self.autocon, "relay": self.relay}}
         defaults = jconf.dumps(defaults, indent=4)
         jsondefs = jconf.loads(defaults)
         try:
@@ -146,6 +164,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.api_move = api["move"]
             self.api_park = api["park"]
             self.api_status = api["status"]
+            self.api_relay = api["relay"]
             self.url_lineEdit.setText(self.url)
             con.log(F"Loaded API config")
         else:
@@ -155,6 +174,7 @@ class MainWindow(QtWidgets.QMainWindow):
             d = defaults["defaults"]
             self.step = d["step"]
             self.speed = d["speed"]
+            self.relay = d["relay"]
             step_index = self.step_comboBox.findText(self.step)
             self.step_comboBox.setCurrentIndex(step_index)
             speed_index = self.speed_comboBox.findText(self.speed)
@@ -162,6 +182,8 @@ class MainWindow(QtWidgets.QMainWindow):
             con.log(F"Autoconnect: {bool(d['autoconnect'])}")
             if bool(d['autoconnect']):
                 self.autoConCheckBox.setChecked(True)
+            if bool(d['relay']):
+                self.relaycheckBox.setChecked(True)
             con.log(F"Loaded defaults")
         else:
             raise KeyError("Error: Key 'defaults' not found in config file.")
@@ -174,18 +196,20 @@ class MainWindow(QtWidgets.QMainWindow):
         self.bandtreeView.setSortingEnabled(True)
 
     def createBandTreeModel(self, parent):
-        model = QStandardItemModel(0, 3, parent)
+        model = QStandardItemModel(0, 4, parent)
         model.setHeaderData(self.BAND, Qt.Orientation.Horizontal, "Діапазон")
         model.setHeaderData(self.STEPS, Qt.Orientation.Horizontal, "Кроки")
+        model.setHeaderData(self.RELAY, Qt.Orientation.Horizontal, "Реле")
         model.setHeaderData(self.DESCRIPTION, Qt.Orientation.Horizontal, "Опис")
         return model
 
-    def addTreeItem(self, model, band, steps, desc):
+    def addTreeItem(self, model, band, steps, relay, desc):
         model.insertRow(0)
         model.setData(model.index(0, self.BAND), band)
         model.setData(model.index(0, self.STEPS), steps)
+        model.setData(model.index(0, self.RELAY), relay)
         model.setData(model.index(0, self.DESCRIPTION), desc)
-        con.log(F"Added items Band: {band}, Step : {steps}, Description: {desc}")
+        con.log(F"Added items Band: {band}, Step : {steps}, Relay : {relay} Description: {desc}")
 
     def initUI(self):
         self.upButton.clicked.connect(self.upButton_click)
@@ -197,6 +221,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.runButton.clicked.connect(self.runButton_click)
         self.deleteButton.clicked.connect(self.deleteButton_click)
         self.autoConCheckBox.toggled.connect(self.set_autoconnect)
+        self.relaycheckBox.toggled.connect(self.set_relay)
         self.comboInit()
         con.log(F"UI Initialized")
 
@@ -248,7 +273,7 @@ class MainWindow(QtWidgets.QMainWindow):
         answer = self.add_dialog.exec()
         if answer:
             values = self.add_dialog.get_fields_values()
-            self.addTreeItem(self.model, values['band'], values['step'], values['desc'])
+            self.addTreeItem(self.model, values['band'], values['step'], values['relay'], values['desc'])
         else:
             con.log("Cancel")
 
