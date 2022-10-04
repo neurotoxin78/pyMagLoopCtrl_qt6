@@ -265,16 +265,18 @@ class MainWindow(QtWidgets.QMainWindow):
                 steps = round(int(output[0][1])) / 100
                 for i in range(int(steps)):
                     self.moveTo(0, 100, self.speed)
+                    self.current_position = int(self.current_position_label.text())
                     sleep(0.1)
-                self.current_position = int(self.current_position_label.text())
+
             elif self.current_position > int(output[0][1]):
                 difference = self.current_position - int(output[0][1])
                 con.log(f"Move from {self.current_position} to {output[0][1]}")
                 steps = round(int(difference) / 100)
                 for i in range(int(steps)):
                     self.moveTo(1, 100, self.speed)
+                    self.current_position = int(self.current_position_label.text())
                     sleep(0.1)
-                self.current_position = int(self.current_position_label.text())
+
             else:
                 difference = int(output[0][1]) - self.current_position
                 con.log(f"Move from {self.current_position} to {output[0][1]}")
@@ -282,7 +284,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 for i in range(int(steps)):
                     self.moveTo(0, 100, self.speed)
                     sleep(0.1)
-                self.current_position = int(self.current_position_label.text())
+                    self.current_position = int(self.current_position_label.text())
+
 
     def getValue(self, value):
         self.current_treeIndex = value
