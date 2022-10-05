@@ -25,20 +25,20 @@ class AddDialog(QtWidgets.QDialog):
         self.desclineEdit = None
         self.steplineEdit = None
         self.bandlineEdit = None
-        self.relaycheckBox = None
+        self.relay1checkBox = None
         uic.loadUi('add_dialog.ui', self)
 
     def set_fields_values(self, band, step, relay, desc):
         self.bandlineEdit.setText(band)
         self.steplineEdit.setText(step)
         self.desclineEdit.setText(desc)
-        self.relaycheckBox.setChecked(bool(relay))
+        self.relay1checkBox.setChecked(bool(relay))
 
     def get_fields_values(self):
         band = self.bandlineEdit.text()
         step = self.steplineEdit.text()
         desc = self.desclineEdit.text()
-        relay = self.relaycheckBox.isChecked()
+        relay = self.relay1checkBox.isChecked()
         return {"band": band, "step": step, "relay": relay, "desc": desc}
 
 
@@ -50,9 +50,15 @@ class MainWindow(QtWidgets.QMainWindow):
         # Load the UI Page
         uic.loadUi('ui.ui', self)
         self.status_label = QtWidgets.QLabel("Статус: ")
-        self.relay_status_label = QtWidgets.QLabel("Реле: ")
+        self.relay1_status_label = QtWidgets.QLabel("1:OFF")
+        self.relay2_status_label = QtWidgets.QLabel("2:OFF")
+        self.relay3_status_label = QtWidgets.QLabel("3:OFF")
+        self.relay4_status_label = QtWidgets.QLabel("4:OFF")
         self.statusbar.addPermanentWidget(self.status_label)
-        self.statusbar.addPermanentWidget(self.relay_status_label)
+        self.statusbar.addPermanentWidget(self.relay1_status_label)
+        self.statusbar.addPermanentWidget(self.relay2_status_label)
+        self.statusbar.addPermanentWidget(self.relay3_status_label)
+        self.statusbar.addPermanentWidget(self.relay4_status_label)
         self.statusbar.reformat()
         self.setStylesheet("stylesheets/cap_control.qss")
         self.add_dialog = AddDialog()
@@ -80,7 +86,19 @@ class MainWindow(QtWidgets.QMainWindow):
         self.bandTreeViewConfig()
         self.load_bandTree()
         self.autoconnect()
-
+    def initUI(self):
+        self.upButton.clicked.connect(self.upButton_click)
+        self.downButton.clicked.connect(self.downButton_click)
+        self.connectButton.clicked.connect(self.connectButton_click)
+        self.parkButton.clicked.connect(self.parkButton_click)
+        self.addButton.clicked.connect(self.addButton_click)
+        self.bandtreeView.clicked.connect(self.getValue)
+        self.runButton.clicked.connect(self.runButton_click)
+        self.deleteButton.clicked.connect(self.deleteButton_click)
+        self.autoConCheckBox.toggled.connect(self.set_autoconnect)
+        self.relay1checkBox.toggled.connect(self.set_relay)
+        self.comboInit()
+        con.log(F"UI Initialized")
     def set_relay(self):
         if self.connected:
             self.relay = self.relaycheckBox.isChecked()
@@ -94,7 +112,7 @@ class MainWindow(QtWidgets.QMainWindow):
             json = resp.json()
             if 'status' in json:
                 stat = json["status"]
-                self.relay_status_label.setText(F"Реле: {stat}")
+                self.relay1_status_label.setText(F"Реле: {stat}")
             # if 'status' in json:
             #     self.status_label.setText(F"Статус: {json['status']}")
 
@@ -191,7 +209,8 @@ class MainWindow(QtWidgets.QMainWindow):
             if bool(d['autoconnect']):
                 self.autoConCheckBox.setChecked(True)
             if bool(d['relay']):
-                self.relaycheckBox.setChecked(True)
+                self.relay1checkBox.setChecked(True)
+                self.relay1_status_label.setText(F"1: ON")
             con.log(F"Loaded defaults")
         else:
             raise KeyError("Error: Key 'defaults' not found in config file.")
@@ -222,19 +241,7 @@ class MainWindow(QtWidgets.QMainWindow):
         model.setData(model.index(0, self.DESCRIPTION), desc)
         con.log(F"Added items Band: {band}, Step : {steps}, Relay : {relay} Description: {desc}")
 
-    def initUI(self):
-        self.upButton.clicked.connect(self.upButton_click)
-        self.downButton.clicked.connect(self.downButton_click)
-        self.connectButton.clicked.connect(self.connectButton_click)
-        self.parkButton.clicked.connect(self.parkButton_click)
-        self.addButton.clicked.connect(self.addButton_click)
-        self.bandtreeView.clicked.connect(self.getValue)
-        self.runButton.clicked.connect(self.runButton_click)
-        self.deleteButton.clicked.connect(self.deleteButton_click)
-        self.autoConCheckBox.toggled.connect(self.set_autoconnect)
-        self.relaycheckBox.toggled.connect(self.set_relay)
-        self.comboInit()
-        con.log(F"UI Initialized")
+
 
     def deleteButton_click(self):
         indices = self.bandtreeView.selectionModel().selectedRows()
@@ -368,7 +375,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.url = self.url_lineEdit.text()
         json = self.connect(self.url).json()
         if 'ip' in json:
-            self.statusbar.showMessage(json['ip'] + " з'єднано")
+            self.statusbar.showMessage("З'єднано")
             self.connected = True
             self.get_info()
         else:
